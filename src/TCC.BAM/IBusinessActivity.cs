@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TCC.BAM
 {
-    interface IUserBusinessActivity
+    interface IBusinessActivity
     {
         void start(long businessActivityId);
     }

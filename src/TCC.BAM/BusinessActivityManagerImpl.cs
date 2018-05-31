@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TCC.BAM
 {
-    public class BusinessActivityManagerImpl : IBusinessActivityManager, IUserBusinessActivity
+    public class BusinessActivityManagerImpl : IBusinessActivityManager, IBusinessActivity
     {
         public void commit()
         {

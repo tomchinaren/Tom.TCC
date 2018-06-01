@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace TCC.BAM
 {
-    interface IBusinessActivityManager
+    public interface IAtomicAction
     {
-        void commit();
-        void rollback();
-        void enlistAction();
-        void delistAction();
+        bool Try();
+        bool Commit();
+        bool Cancel();
     }
 }

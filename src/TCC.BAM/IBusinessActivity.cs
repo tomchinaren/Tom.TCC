@@ -6,8 +6,15 @@ using System.Threading.Tasks;
 
 namespace TCC.BAM
 {
-    interface IBusinessActivity
+    public interface IBusinessActivity
     {
-        void start(long businessActivityId);
+        void Start();
+        void Start(long businessActivityId);
+        bool Try();
+        bool Commit();
+        bool Cancel();
+        void EnlistAction(IAtomicAction action);
+        void DelistAction(IAtomicAction action);
+        void ChangeStatus(BusinessActivityStatus newStatus);
     }
 }

@@ -40,10 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BusinessActivityManagerImpl.cs" />
-    <Compile Include="IBusinessActivityManager.cs" />
+    <Compile Include="BusinessActivityImpl.cs" />
+    <Compile Include="IAtomicAction.cs" />
     <Compile Include="IBusinessActivity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BusinessActivityStatus.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

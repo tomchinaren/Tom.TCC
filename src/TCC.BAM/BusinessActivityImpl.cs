@@ -14,7 +14,6 @@ namespace TCC.BAM
         private BusinessActivityStatus _lastStatus;
         private BusinessActivityStatus _status;
         private List<IAtomicAction> _actionList;
-        private Dictionary<BusinessActivityStatus, BusinessActivityStatus> _statusCanChangedDict;   //key for current status, value for new status
         private List<Tuple<BusinessActivityStatus, BusinessActivityStatus>> _statusFlows;   //key for current status, value for new status
         private ILog _log;
 

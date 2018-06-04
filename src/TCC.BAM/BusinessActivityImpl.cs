@@ -9,49 +9,26 @@ namespace TCC.BAM
 {
     public class BusinessActivityImpl : IBusinessActivity
     {
+        //static properties
+        private static Flow _flow;
         //properties
         private long _businessActivityID;
         private BusinessActivityStatus _lastStatus;
         private BusinessActivityStatus _status;
         private List<IAtomicAction> _actionList;
-        private List<Tuple<BusinessActivityStatus, BusinessActivityStatus>> _statusFlows;   //key for current status, value for new status
         private ILog _log;
+
+        static BusinessActivityImpl()
+        {
+            _flow = new BAM.Flow();
+        }
 
         public BusinessActivityImpl(ILog log = null)
         {
-            InitFlows();
             _status = BusinessActivityStatus.Init;
             _lastStatus = _status;
             _actionList = new List<IAtomicAction>();
             _log = log;
-        }
-
-        private void InitFlows()
-        {
-            _statusFlows = new List<Tuple<BusinessActivityStatus, BusinessActivityStatus>>();
-            //start stop
-            AddToFlows(_statusFlows, BusinessActivityStatus.Init, BusinessActivityStatus.Started);
-            AddToFlows(_statusFlows, BusinessActivityStatus.Init, BusinessActivityStatus.Stopped);
-            AddToFlows(_statusFlows, BusinessActivityStatus.Started, BusinessActivityStatus.Stopped);
-            //try
-            AddToFlows(_statusFlows, BusinessActivityStatus.Started, BusinessActivityStatus.Trying);
-            AddToFlows(_statusFlows, BusinessActivityStatus.Trying, BusinessActivityStatus.Tryed);
-            AddToFlows(_statusFlows, BusinessActivityStatus.Trying, BusinessActivityStatus.TryFailed);
-            //commit
-            AddToFlows(_statusFlows, BusinessActivityStatus.Tryed, BusinessActivityStatus.Commiting);
-            AddToFlows(_statusFlows, BusinessActivityStatus.Tryed, BusinessActivityStatus.Canceling);
-            AddToFlows(_statusFlows, BusinessActivityStatus.Commiting, BusinessActivityStatus.Commited);
-            AddToFlows(_statusFlows, BusinessActivityStatus.Commiting, BusinessActivityStatus.CommitFailed);
-            //cancel
-            AddToFlows(_statusFlows, BusinessActivityStatus.TryFailed, BusinessActivityStatus.Canceling);
-            AddToFlows(_statusFlows, BusinessActivityStatus.CommitFailed, BusinessActivityStatus.Canceling);
-            AddToFlows(_statusFlows, BusinessActivityStatus.Canceling, BusinessActivityStatus.Canceled);
-            AddToFlows(_statusFlows, BusinessActivityStatus.Canceling, BusinessActivityStatus.CancelFailed);
-        }
-        private void AddToFlows(List<Tuple<BusinessActivityStatus, BusinessActivityStatus>> flows, BusinessActivityStatus curStatus, BusinessActivityStatus newStatus)
-        {
-            var flowItem = new Tuple<BusinessActivityStatus, BusinessActivityStatus>(curStatus, newStatus);
-            flows.Add(flowItem);
         }
 
         public void EnlistAction(IAtomicAction action)
@@ -136,7 +113,7 @@ namespace TCC.BAM
 
         public void ChangeStatus(BusinessActivityStatus newStatus)
         {
-            bool flag = _statusFlows.Exists(t => t.Item1 == _status && t.Item2 == newStatus);
+            bool flag = _flow.Exists(t => t.Item1 == _status && t.Item2 == newStatus);
             if (!flag)
             {
                 throw new ChangeStatusException(string.Format("ChangeStatus error, can't change status from {0} to {1}", _status, newStatus));

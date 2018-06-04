@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BusinessActivityImpl.cs" />
+    <Compile Include="Exceptions\ChangeStatusException.cs" />
     <Compile Include="IAtomicAction.cs" />
     <Compile Include="IBusinessActivity.cs" />
     <Compile Include="ILog.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TCC.BAM.Exceptions;
 
 namespace TCC.BAM
 {
@@ -45,6 +46,7 @@ namespace TCC.BAM
             //cancel
             AddToFlows(_statusFlows, BusinessActivityStatus.TryFailed, BusinessActivityStatus.Canceling);
             AddToFlows(_statusFlows, BusinessActivityStatus.CommitFailed, BusinessActivityStatus.Canceling);
+            AddToFlows(_statusFlows, BusinessActivityStatus.Canceling, BusinessActivityStatus.Canceled);
             AddToFlows(_statusFlows, BusinessActivityStatus.Canceling, BusinessActivityStatus.CancelFailed);
         }
         private void AddToFlows(List<Tuple<BusinessActivityStatus, BusinessActivityStatus>> flows, BusinessActivityStatus curStatus, BusinessActivityStatus newStatus)
@@ -138,7 +140,7 @@ namespace TCC.BAM
             bool flag = _statusFlows.Exists(t => t.Item1 == _status && t.Item2 == newStatus);
             if (!flag)
             {
-                throw new Exception(string.Format("Error, can't change status from {0} to {1}", _status, newStatus));
+                throw new ChangeStatusException(string.Format("ChangeStatus error, can't change status from {0} to {1}", _status, newStatus));
             }
 
             _lastStatus = _status;

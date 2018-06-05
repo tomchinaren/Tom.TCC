@@ -9,15 +9,18 @@ namespace TCC.BAM
 {
     public class BusinessActivityImpl : IBusinessActivity
     {
-        //static properties
+        #region Fields
+        //static Fields
         private static Flow _flow;
-        //properties
+        //Fields
         private long _businessActivityID;
         private BusinessActivityStatus _lastStatus;
         private BusinessActivityStatus _status;
         private List<IAtomicAction> _actionList;
         private ILog _log;
+        #endregion
 
+        #region Ctor
         static BusinessActivityImpl()
         {
             _flow = new BAM.Flow();
@@ -29,6 +32,13 @@ namespace TCC.BAM
             _lastStatus = _status;
             _actionList = new List<IAtomicAction>();
             _log = log;
+        }
+        #endregion
+
+        #region Methods
+        private long GetLongID()
+        {
+            return BitConverter.ToInt64(Guid.NewGuid().ToByteArray(), 0);
         }
 
         public void EnlistAction(IAtomicAction action)
@@ -50,6 +60,23 @@ namespace TCC.BAM
         {
             _businessActivityID = businessActivityID;
             ChangeStatus(BusinessActivityStatus.Started);
+        }
+
+        public void ChangeStatus(BusinessActivityStatus newStatus)
+        {
+            bool flag = _flow.Exists(t => t.Item1 == _status && t.Item2 == newStatus);
+            if (!flag)
+            {
+                throw new ChangeStatusException(string.Format("ChangeStatus error, can't change status from {0} to {1}", _status, newStatus));
+            }
+
+            _lastStatus = _status;
+            _status = newStatus;
+
+            if (_log != null)
+            {
+                _log.Info(_lastStatus, _status);
+            }
         }
 
         public bool Try()
@@ -105,27 +132,6 @@ namespace TCC.BAM
             return flag;
         }
 
-
-        private long GetLongID()
-        {
-            return BitConverter.ToInt64(Guid.NewGuid().ToByteArray(), 0);
-        }
-
-        public void ChangeStatus(BusinessActivityStatus newStatus)
-        {
-            bool flag = _flow.Exists(t => t.Item1 == _status && t.Item2 == newStatus);
-            if (!flag)
-            {
-                throw new ChangeStatusException(string.Format("ChangeStatus error, can't change status from {0} to {1}", _status, newStatus));
-            }
-
-            _lastStatus = _status;
-            _status = newStatus;
-
-            if (_log != null)
-            {
-                _log.Info(_lastStatus, _status);
-            }
-        }
+        #endregion
     }
 }
